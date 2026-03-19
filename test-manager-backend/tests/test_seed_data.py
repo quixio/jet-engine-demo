@@ -75,6 +75,15 @@ class TestCSVParsing:
             assert "_id" in loc
             assert "location" in loc
 
+        # Product categories should be extracted
+        categories = lookup_data["product_categories"]
+        assert len(categories) > 0
+        # Check structure of first category
+        if categories:
+            cat = categories[0]
+            assert "_id" in cat
+            assert "name" in cat
+
     def test_csv_extracts_expected_values(self):
         """Test that specific expected values are extracted."""
         lookup_data = parse_csv_for_lookups()
@@ -89,6 +98,22 @@ class TestCSVParsing:
         location_ids = [loc["_id"] for loc in lookup_data["locations"]]
         # Should have generic test locations
         assert any(loc_id.startswith("Lab-") or loc_id.startswith("Bench-") for loc_id in location_ids)
+
+        # Check for known product categories from the CSV
+        category_ids = [cat["_id"] for cat in lookup_data["product_categories"]]
+        assert "Electronics" in category_ids
+        assert "Mechanical" in category_ids
+        assert "Software" in category_ids
+        assert "Sensors" in category_ids
+
+    def test_csv_product_categories_have_readable_names(self):
+        """Test that product categories get human-readable names."""
+        lookup_data = parse_csv_for_lookups()
+        categories = {cat["_id"]: cat["name"] for cat in lookup_data["product_categories"]}
+        assert categories["Electronics"] == "Electronics"
+        assert categories["Mechanical"] == "Mechanical Components"
+        assert categories["Software"] == "Software Modules"
+        assert categories["Sensors"] == "Sensor Systems"
 
 
 class TestSeeding:
@@ -110,6 +135,11 @@ class TestSeeding:
         locations = response.json()
         assert len(locations) > 0
 
+        response = client.get("/api/v1/lookups/product-categories")
+        assert response.status_code == 200
+        categories = response.json()
+        assert len(categories) > 0
+
         # Verify structure of seeded data
         # Note: API returns with alias=False, so _id becomes id
         assert "id" in sample_types[0]
@@ -117,3 +147,6 @@ class TestSeeding:
 
         assert "id" in locations[0]
         assert "location" in locations[0]
+
+        assert "id" in categories[0]
+        assert "name" in categories[0]

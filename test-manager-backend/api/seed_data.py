@@ -89,7 +89,14 @@ def parse_csv_for_lookups() -> dict[str, list[dict[str, Any]]]:
             for loc in sorted(locations)
             if loc
         ],
-        "product_categories": [],  # Not implemented in lookup API yet
+        "product_categories": [
+            {
+                "_id": cat,
+                "name": _generate_category_name(cat),
+            }
+            for cat in sorted(product_categories)
+            if cat
+        ],
     }
 
 
@@ -169,6 +176,16 @@ def seed_lookup_tables(mongo: Database[dict[str, Any]]) -> None:
             logger.warning("No locations found in seed data")
     else:
         logger.info(f"Locations already exist ({mongo.locations.count_documents({})} records)")
+
+    # Seed product categories
+    if mongo.product_categories.count_documents({}) == 0:
+        if lookup_data["product_categories"]:
+            mongo.product_categories.insert_many(lookup_data["product_categories"])
+            logger.info(f"✅ Seeded {len(lookup_data['product_categories'])} product categories")
+        else:
+            logger.warning("No product categories found in seed data")
+    else:
+        logger.info(f"Product categories already exist ({mongo.product_categories.count_documents({})} records)")
 
     # Seed products (which carry manufacturer info)
     if mongo.products.count_documents({}) == 0:
