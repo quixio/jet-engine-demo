@@ -20,10 +20,10 @@ deployments:
     variables:
       - name: TEST_API_URL
         inputType: FreeText
-        value: https://backend-api-quixers-quixtestmanager-new.az-france-0.app.quix.io/api/v1/tests
+        value: https://test-manager-backend/api/v1/tests
       - name: ECU_API_URL
         inputType: FreeText
-        value: https://ecu-quixers-testrigdemotestrigsimulator-new.az-france-0.app.quix.io/ecu/start
+        value: https://ecu/ecu/start
       - name: API_TOKEN
         inputType: Secret
         secretKey: API_TOKEN
@@ -38,10 +38,12 @@ deployments:
     publicAccess:
       enabled: true
       urlPrefix: ecu
+    network:
+      serviceName: ecu
     variables:
       - name: data_api_endpoint
         inputType: FreeText
-        value: https://test-rig-data-quixers-testrigdemomeasurementdata-prod.az-france-0.app.quix.io/data
+        value: https://test-rig-data-api/data
   - name: test-rig-data
     application: test-rig-data
     version: latest
@@ -53,6 +55,8 @@ deployments:
     publicAccess:
       enabled: true
       urlPrefix: test-rig-data
+    network:
+      serviceName: test-rig-data-api
     variables:
       - name: output
         inputType: OutputTopic
@@ -122,10 +126,6 @@ deployments:
         inputType: FreeText
         required: true
         value: mongodb
-      - name: Quix__BlobStorage__Connection__Json
-        inputType: Secret
-        required: true
-        secretKey: Quix__BlobStorage__Connection__Json
       - name: INFLUXDB_USER
         inputType: Secret
         required: true
@@ -158,6 +158,8 @@ deployments:
         inputType: FreeText
         required: true
         value: {{ANALYTICS_URL}}
+    blobStorage:
+      bind: true
   - name: Dynamic Configuration Manager
     application: DynamicConfiguration
     version: latest
