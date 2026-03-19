@@ -52,8 +52,25 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         logger.info(f"✓ Config API: {settings.config_api_url}")
         logger.info("=" * 60)
 
-    mongo.connect(settings.mongo)
-    influx.connect(settings.influx)
+    # Connect to databases with error handling and verification
+    try:
+        logger.info("Connecting to MongoDB...")
+        mongo.connect(settings.mongo)
+        # Verify MongoDB connection by issuing a ping
+        mongo.get_mongo().command("ping")
+        logger.info("MongoDB connection verified successfully")
+    except Exception as e:
+        logger.error("Failed to connect to MongoDB: %s", e)
+        raise
+
+    try:
+        logger.info("Connecting to InfluxDB...")
+        influx.connect(settings.influx)
+        logger.info("InfluxDB connection verified successfully")
+    except Exception as e:
+        logger.error("Failed to connect to InfluxDB: %s", e)
+        mongo.disconnect()
+        raise
 
     # Seed lookup tables if they're empty
     seed_lookup_tables(mongo.get_mongo())

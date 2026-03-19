@@ -48,6 +48,7 @@ def connect(settings: InfluxSettings) -> None:
         username=settings.user,
         password=settings.password,
         database=settings.database,
+        timeout=5,
     )
     _influx = Influx(client=client, measurement=settings.measurement)
     if settings.database not in {db["name"] for db in client.get_list_database()}:
