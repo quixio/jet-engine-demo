@@ -249,3 +249,4 @@ topics:
   - name: http-source
   - name: config-updates
   - name: edf-data
+  - name: normalised-data
