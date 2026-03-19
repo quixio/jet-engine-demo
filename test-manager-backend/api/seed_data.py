@@ -170,4 +170,19 @@ def seed_lookup_tables(mongo: Database[dict[str, Any]]) -> None:
     else:
         logger.info(f"Locations already exist ({mongo.locations.count_documents({})} records)")
 
+    # Seed products (which carry manufacturer info)
+    if mongo.products.count_documents({}) == 0:
+        default_products = [
+            {"_id": "siemens-sgт-800", "manufacturer": "Siemens", "product_category": "Gas", "product_name": "SGT-800"},
+            {"_id": "siemens-sgt-750", "manufacturer": "Siemens", "product_category": "Gas", "product_name": "SGT-750"},
+            {"_id": "bosch-mgt-400", "manufacturer": "Bosch", "product_category": "Gas", "product_name": "MGT-400"},
+            {"_id": "bosch-kts-560", "manufacturer": "Bosch", "product_category": "Electronics", "product_name": "KTS 560"},
+            {"_id": "rolls-royce-trent-700", "manufacturer": "Rolls-Royce", "product_category": "Gas", "product_name": "Trent 700"},
+            {"_id": "rolls-royce-trent-xwb", "manufacturer": "Rolls-Royce", "product_category": "Gas", "product_name": "Trent XWB"},
+        ]
+        mongo.products.insert_many(default_products)
+        logger.info(f"Seeded {len(default_products)} products (Siemens, Bosch, Rolls-Royce)")
+    else:
+        logger.info(f"Products already exist ({mongo.products.count_documents({})} records)")
+
     logger.info("Lookup table seeding complete")
