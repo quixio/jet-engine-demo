@@ -227,8 +227,7 @@ deployments:
         icon: build
         order: 0
 
-
-
 # This section describes the Topics of the data pipeline
 topics:
   - name: http-source
+  - name: config-updates
