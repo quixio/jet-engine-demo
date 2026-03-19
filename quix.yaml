@@ -353,6 +353,16 @@ deployments:
         value: 10
     blobStorage:
       bind: true
+  - name: Quix DataLake Raw Sink
+    application: DataLake.Sink
+    version: latest
+    deploymentType: Managed
+    resources:
+      cpu: 500
+      memory: 1500
+      replicas: 1
+    configuration:
+      topic: config-enriched-data
 
 # This section describes the Topics of the data pipeline
 topics:
