@@ -27,6 +27,16 @@ deployments:
       - name: API_TOKEN
         inputType: Secret
         secretKey: API_TOKEN
+    plugin:
+      embeddedView:
+        enabled: true
+        hideHeader: true
+        default: true
+      sidebarItem:
+        show: true
+        label: LabVIEW Sim
+        icon: category
+        order: 0
   - name: Rig ECU
     application: rig-ecu
     version: latest
