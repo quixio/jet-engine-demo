@@ -112,10 +112,81 @@ def home_page():
                 border-bottom-color: #808080;
                 background-color: #ffffff;
             }}
-            
+
             input[type="text"]:focus,
             input[type="number"]:focus {{
                 outline: none;
+            }}
+
+            /* Combo box styling */
+            .combo-box {{
+                display: inline-flex;
+                position: relative;
+                width: 250px;
+            }}
+
+            .combo-box input {{
+                width: 100%;
+                padding: 3px 2px;
+                font-family: 'MS Sans Serif', Arial, sans-serif;
+                font-size: 11px;
+                border: 2px inset #dfdfdf;
+                border-right-color: #808080;
+                border-bottom-color: #808080;
+                background-color: #ffffff;
+                box-sizing: border-box;
+            }}
+
+            .combo-box .combo-btn {{
+                width: 18px;
+                min-width: 18px;
+                height: auto;
+                margin: 0;
+                padding: 0;
+                font-size: 9px;
+                border: 2px outset #dfdfdf;
+                border-right-color: #808080;
+                border-bottom-color: #808080;
+                background-color: #c0c0c0;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }}
+
+            .combo-box .combo-btn:active {{
+                border-style: inset;
+            }}
+
+            .combo-dropdown {{
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                max-height: 150px;
+                overflow-y: auto;
+                background-color: #ffffff;
+                border: 1px solid #808080;
+                z-index: 1000;
+                box-sizing: border-box;
+            }}
+
+            .combo-dropdown.open {{
+                display: block;
+            }}
+
+            .combo-dropdown div {{
+                padding: 2px 4px;
+                font-family: 'MS Sans Serif', Arial, sans-serif;
+                font-size: 11px;
+                cursor: pointer;
+                white-space: nowrap;
+            }}
+
+            .combo-dropdown div:hover {{
+                background-color: #000080;
+                color: #ffffff;
             }}
             
             button {{
@@ -245,55 +316,150 @@ def home_page():
                     <label for="testid">Test ID:</label>
                     <input type="text" id="testid" name="testid" value="{current_test_id}" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="campaignid">Campaign ID:</label>
-                    <input type="text" id="campaignid" name="campaignid" value="CAMP-2024-001" required>
+                    <div class="combo-box">
+                        <input type="text" id="campaignid" name="campaignid" value="CAMP-2024-001" required>
+                        <button type="button" class="combo-btn" data-combo="campaignid">&#9660;</button>
+                        <div class="combo-dropdown" data-for="campaignid">
+                            <div data-value="CAMP-2024-001">CAMP-2024-001</div>
+                            <div data-value="CAMP-2024-002">CAMP-2024-002</div>
+                            <div data-value="CAMP-2024-003">CAMP-2024-003</div>
+                            <div data-value="CAMP-2025-001">CAMP-2025-001</div>
+                        </div>
+                    </div>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="sampleid">Sample ID:</label>
-                    <input type="text" id="sampleid" name="sampleid" value="SAMPLE-001" required>
+                    <div class="combo-box">
+                        <input type="text" id="sampleid" name="sampleid" value="Device-HP-001" required>
+                        <button type="button" class="combo-btn" data-combo="sampleid">&#9660;</button>
+                        <div class="combo-dropdown" data-for="sampleid">
+                            <div data-value="Device-HP-001">Device-HP-001</div>
+                            <div data-value="Device-HP-002">Device-HP-002</div>
+                            <div data-value="Device-HP-003">Device-HP-003</div>
+                            <div data-value="Device-HP-004">Device-HP-004</div>
+                            <div data-value="Device-GB-001">Device-GB-001</div>
+                            <div data-value="Device-HP-005">Device-HP-005</div>
+                            <div data-value="Device-HP-006">Device-HP-006</div>
+                            <div data-value="Device-GB-002">Device-GB-002</div>
+                        </div>
+                    </div>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="environmentid">Environment ID:</label>
-                    <input type="text" id="environmentid" name="environmentid" value="ENV-LAB-01" required>
+                    <div class="combo-box">
+                        <input type="text" id="environmentid" name="environmentid" value="Lab-A-01" required>
+                        <button type="button" class="combo-btn" data-combo="environmentid">&#9660;</button>
+                        <div class="combo-dropdown" data-for="environmentid">
+                            <div data-value="Lab-A-01">Lab-A-01</div>
+                            <div data-value="Lab-A-02">Lab-A-02</div>
+                            <div data-value="Lab-A-03">Lab-A-03</div>
+                            <div data-value="Lab-B-01">Lab-B-01</div>
+                            <div data-value="Lab-B-02">Lab-B-02</div>
+                            <div data-value="Lab-B-03">Lab-B-03</div>
+                            <div data-value="TestBench-01">TestBench-01</div>
+                            <div data-value="TestBench-02">TestBench-02</div>
+                            <div data-value="TestBench-03">TestBench-03</div>
+                            <div data-value="TestBench-04">TestBench-04</div>
+                            <div data-value="Station-101">Station-101</div>
+                            <div data-value="Station-102">Station-102</div>
+                            <div data-value="DevLab-1">DevLab-1</div>
+                            <div data-value="DevLab-2">DevLab-2</div>
+                            <div data-value="QA-Room-1">QA-Room-1</div>
+                            <div data-value="QA-Room-2">QA-Room-2</div>
+                        </div>
+                    </div>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="batteryid">Battery ID:</label>
-                    <input type="text" id="batteryid" name="batteryid" value="BATT-12345" required>
+                    <div class="combo-box">
+                        <input type="text" id="batteryid" name="batteryid" value="BATT-LI-001" required>
+                        <button type="button" class="combo-btn" data-combo="batteryid">&#9660;</button>
+                        <div class="combo-dropdown" data-for="batteryid">
+                            <div data-value="BATT-LI-001">BATT-LI-001</div>
+                            <div data-value="BATT-LI-002">BATT-LI-002</div>
+                            <div data-value="BATT-PB-001">BATT-PB-001</div>
+                        </div>
+                    </div>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="fanid">Fan ID:</label>
-                    <input type="text" id="fanid" name="fanid" value="FAN-001" required>
+                    <div class="combo-box">
+                        <input type="text" id="fanid" name="fanid" value="FAN-AX-001" required>
+                        <button type="button" class="combo-btn" data-combo="fanid">&#9660;</button>
+                        <div class="combo-dropdown" data-for="fanid">
+                            <div data-value="FAN-AX-001">FAN-AX-001</div>
+                            <div data-value="FAN-AX-002">FAN-AX-002</div>
+                            <div data-value="FAN-CF-001">FAN-CF-001</div>
+                        </div>
+                    </div>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="motorid">Motor ID:</label>
-                    <input type="text" id="motorid" name="motorid" value="MOT-001" required>
+                    <div class="combo-box">
+                        <input type="text" id="motorid" name="motorid" value="MOT-BL-001" required>
+                        <button type="button" class="combo-btn" data-combo="motorid">&#9660;</button>
+                        <div class="combo-dropdown" data-for="motorid">
+                            <div data-value="MOT-BL-001">MOT-BL-001</div>
+                            <div data-value="MOT-BL-002">MOT-BL-002</div>
+                            <div data-value="MOT-ST-001">MOT-ST-001</div>
+                        </div>
+                    </div>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="shroudid">Shroud ID:</label>
-                    <input type="text" id="shroudid" name="shroudid" value="SHROUD-001" required>
+                    <div class="combo-box">
+                        <input type="text" id="shroudid" name="shroudid" value="SHR-AL-001" required>
+                        <button type="button" class="combo-btn" data-combo="shroudid">&#9660;</button>
+                        <div class="combo-dropdown" data-for="shroudid">
+                            <div data-value="SHR-AL-001">SHR-AL-001</div>
+                            <div data-value="SHR-AL-002">SHR-AL-002</div>
+                            <div data-value="SHR-CF-001">SHR-CF-001</div>
+                        </div>
+                    </div>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="throttle">Throttle %:</label>
                     <input type="number" id="throttle" name="throttle" min="0" max="100" value="50" required>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="operator">Operator Name:</label>
-                    <input type="text" id="operator" name="operator" value="John Smith" required>
+                    <div class="combo-box">
+                        <input type="text" id="operator" name="operator" value="John Smith" required>
+                        <button type="button" class="combo-btn" data-combo="operator">&#9660;</button>
+                        <div class="combo-dropdown" data-for="operator">
+                            <div data-value="John Smith">John Smith</div>
+                            <div data-value="Sarah Connor">Sarah Connor</div>
+                            <div data-value="Michael Chen">Michael Chen</div>
+                            <div data-value="Anna Mueller">Anna Mueller</div>
+                            <div data-value="David Park">David Park</div>
+                        </div>
+                    </div>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="holdtime">Hold Time:</label>
-                    <input type="text" id="holdtime" name="holdtime" value="30000" required>
+                    <div class="combo-box">
+                        <input type="text" id="holdtime" name="holdtime" value="30000" required>
+                        <button type="button" class="combo-btn" data-combo="holdtime">&#9660;</button>
+                        <div class="combo-dropdown" data-for="holdtime">
+                            <div data-value="6000">6000 (6 sec)</div>
+                            <div data-value="15000">15000 (15 sec)</div>
+                            <div data-value="30000">30000 (30 sec)</div>
+                            <div data-value="60000">60000 (60 sec)</div>
+                            <div data-value="120000">120000 (2 min)</div>
+                        </div>
+                    </div>
                 </div>
                 
                 <div id="status-message"></div>
@@ -338,6 +504,40 @@ def home_page():
         </div>
 
         <script>
+            // Combo box behavior
+            document.querySelectorAll('.combo-btn').forEach(function(btn) {{
+                btn.addEventListener('click', function(e) {{
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var targetId = btn.getAttribute('data-combo');
+                    var dropdown = document.querySelector('.combo-dropdown[data-for="' + targetId + '"]');
+                    // Close all other dropdowns
+                    document.querySelectorAll('.combo-dropdown.open').forEach(function(d) {{
+                        if (d !== dropdown) d.classList.remove('open');
+                    }});
+                    dropdown.classList.toggle('open');
+                }});
+            }});
+
+            document.querySelectorAll('.combo-dropdown div').forEach(function(item) {{
+                item.addEventListener('click', function() {{
+                    var dropdown = item.parentElement;
+                    var targetId = dropdown.getAttribute('data-for');
+                    var input = document.getElementById(targetId);
+                    input.value = item.getAttribute('data-value');
+                    dropdown.classList.remove('open');
+                }});
+            }});
+
+            // Close dropdowns when clicking outside
+            document.addEventListener('click', function(e) {{
+                if (!e.target.closest('.combo-box')) {{
+                    document.querySelectorAll('.combo-dropdown.open').forEach(function(d) {{
+                        d.classList.remove('open');
+                    }});
+                }}
+            }});
+
             function incrementTestId(testId) {{
                 const parts = testId.split('-');
                 if (parts.length === 2 && /^\\d+$/.test(parts[1])) {{
@@ -431,12 +631,12 @@ def api_submit_test():
                 logger.info(f"Device {sample_id} not found, creating it")
                 device_data = {
                     "device_id": sample_id,
-                    "manufacturer": "Unknown",
-                    "product_category": "Sample",
-                    "product_name": sample_id,
-                    "sample_type": "Test Sample",
-                    "location": data.get('environmentid', 'Unknown'),
-                    "creator": data.get('operator', 'Unknown')
+                    "manufacturer": "Siemens",
+                    "product_category": "Electronics",
+                    "product_name": "SGT-800",
+                    "sample_type": "PFP",
+                    "location": data.get('environmentid', 'Lab-A-01'),
+                    "creator": data.get('operator', 'John Smith')
                 }
                 create_device_url = f"{test_api_url.rsplit('/tests', 1)[0]}/devices"
                 create_response = requests.post(create_device_url, json=device_data, headers=headers, timeout=10)
