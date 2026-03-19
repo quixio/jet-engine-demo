@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
-from . import mongo, influx
+from . import mongo
 from .routes.admin import router as admin_router
 from .routes.devices import router as devices_router
 from .routes.files import router as files_router
@@ -61,15 +61,6 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         logger.info("MongoDB connection verified successfully")
     except Exception as e:
         logger.error("Failed to connect to MongoDB: %s", e)
-        raise
-
-    try:
-        logger.info("Connecting to InfluxDB...")
-        influx.connect(settings.influx)
-        logger.info("InfluxDB connection verified successfully")
-    except Exception as e:
-        logger.error("Failed to connect to InfluxDB: %s", e)
-        mongo.disconnect()
         raise
 
     # Seed lookup tables if they're empty

@@ -1,8 +1,6 @@
 from fastapi.testclient import TestClient
-from influxdb import InfluxDBClient
 from datetime import datetime, timezone, timedelta
 
-from api.settings import get_settings
 from tests.conftest import TestFactory
 
 
@@ -19,7 +17,7 @@ def test_create_logbook_entry_test_not_found(client: TestClient) -> None:
 
 
 def test_create_logbook_entry(
-    client: TestClient, create_test: TestFactory, influx: InfluxDBClient
+    client: TestClient, create_test: TestFactory
 ) -> None:
     test_id = "test1"
     create_test(test_id=test_id)
@@ -40,23 +38,6 @@ def test_create_logbook_entry(
     assert "id" in data
     assert "created_at" in data
     assert data["timestamp"] == "2025-01-01T00:00:00Z"
-
-    # Verify that the entry is in InfluxDB
-    settings = get_settings().influx
-    query = f'SELECT * FROM "{settings.measurement}" WHERE "id" = \'{data["id"]}\''
-    result = influx.query(query)
-    points = list(result.get_points())
-    assert len(points) == 1
-    point = points[0]
-    assert point["id"] == data["id"]
-    assert point["time"] == "2025-01-01T00:00:00Z"
-    assert point["test_id"] == "test1"
-    assert point["content"] == "This is a logbook entry."
-    assert point["operator"] == "John Doe"
-    assert point["sensor_ids"] == "sensor1,sensor2"
-    assert point["created_at"] == int(
-        datetime.fromisoformat(data["created_at"]).timestamp()
-    )
 
 
 def test_create_logbook_entry_non_utc_timestamp_normalized(
@@ -208,7 +189,7 @@ def test_get_logbook_entry_wrong_test_id(
 
 
 def test_update_logbook_entry(
-    client: TestClient, create_test: TestFactory, influx: InfluxDBClient
+    client: TestClient, create_test: TestFactory
 ) -> None:
     test_id = "test_for_update"
     create_test(test_id=test_id)
@@ -222,14 +203,6 @@ def test_update_logbook_entry(
     )
     assert response.status_code == 200
     assert response.json()["content"] == "Updated content."
-
-    # Verify that the entry is updated in InfluxDB
-    settings = get_settings().influx
-    query = f'SELECT * FROM "{settings.measurement}" WHERE "id" = \'{entry_id}\''
-    result = influx.query(query)
-    points = list(result.get_points())
-    assert len(points) == 1
-    assert points[0]["content"] == "Updated content."
 
 
 def test_update_logbook_entry_not_found(client: TestClient) -> None:
@@ -246,7 +219,7 @@ def test_update_logbook_entry_no_data(client: TestClient) -> None:
 
 
 def test_delete_logbook_entry(
-    client: TestClient, create_test: TestFactory, influx: InfluxDBClient
+    client: TestClient, create_test: TestFactory
 ) -> None:
     test_id = "test_for_delete"
     create_test(test_id=test_id)
@@ -262,12 +235,6 @@ def test_delete_logbook_entry(
 
     response = client.delete(f"/api/v1/tests/test_for_delete/logbook/{entry_id}")
     assert response.status_code == 204
-
-    # Verify that the entry is also deleted from InfluxDB
-    settings = get_settings().influx
-    query = f'SELECT * FROM "{settings.measurement}" WHERE "id" = \'{entry_id}\''
-    result = influx.query(query)
-    assert not list(result.get_points())
 
 
 def test_create_logbook_entry_with_default_timestamp(
@@ -315,7 +282,7 @@ def test_create_logbook_entry_with_custom_timestamp(
 
 
 def test_update_logbook_entry_with_timestamp(
-    client: TestClient, create_test: TestFactory, influx: InfluxDBClient
+    client: TestClient, create_test: TestFactory
 ) -> None:
     test_id = "test_timestamp_update"
     create_test(test_id=test_id)
@@ -339,16 +306,6 @@ def test_update_logbook_entry_with_timestamp(
     assert data["operator"] == "Grace Updated"
     assert data["content"] == "Updated with timestamp."
     assert data["timestamp"] == "2023-12-25T18:00:00Z"
-
-    # Verify that the entry is updated in InfluxDB
-    settings = get_settings().influx
-    query = f'SELECT * FROM "{settings.measurement}" WHERE "id" = \'{entry_id}\''
-    result = influx.query(query)
-    points = list(result.get_points())
-    assert len(points) == 1
-    point = points[0]
-    assert point["operator"] == "Grace Updated"
-    assert point["content"] == "Updated with timestamp."
 
 
 def test_update_logbook_entry_timestamp_only(

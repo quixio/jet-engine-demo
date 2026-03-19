@@ -7,10 +7,8 @@ from urllib.parse import urlparse
 
 import httpx
 from fastapi.testclient import TestClient
-from influxdb import InfluxDBClient
 
 from api.config_api import get_config_api_client
-from api.settings import get_settings
 from tests.conftest import TestFactory
 
 UTC_ISO_DATATIME = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$")
@@ -310,7 +308,6 @@ def test_delete_test(
     create_test: TestFactory,
     client: TestClient,
     config_api: httpx.Client,
-    influx: InfluxDBClient,
     fs: Any,
 ) -> None:
     """
@@ -366,14 +363,6 @@ def test_delete_test(
     logbook_entries = response.json()
     assert len(logbook_entries) == 2
 
-    # Verify logbook entries exist in InfluxDB
-    settings = get_settings().influx
-    for entry in logbook_entries:
-        result = influx.query(
-            f'SELECT * FROM "{settings.measurement}" WHERE "id" = \'{entry["id"]}\''
-        )
-        assert len(list(result.get_points())) == 1
-
     # 4. Delete the test
     response = client.delete(f"/api/v1/tests/{test_id}")
     assert response.status_code == 204
@@ -398,14 +387,7 @@ def test_delete_test(
     assert response.status_code == 200
     assert len(response.json()) == 0
 
-    # 8. Verify logbook entries are also deleted from InfluxDB
-    for entry in logbook_entries:
-        result = influx.query(
-            f'SELECT * FROM "{settings.measurement}" WHERE "id" = \'{entry["id"]}\''
-        )
-        assert len(list(result.get_points())) == 0
-
-    # 9. Verify the configuration is deleted from Config API
+    # 8. Verify the configuration is deleted from Config API
     config_response = config_api.get(f"/api/v1/configurations/{config_id}")
     assert config_response.status_code == 404
 

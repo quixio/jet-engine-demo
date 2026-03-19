@@ -7,13 +7,11 @@ from typing import Any, Callable, Generator, ContextManager
 
 import httpx
 import requests
-from influxdb import InfluxDBClient
 import pytest
 from fastapi.testclient import TestClient
 from quixportal import get_filesystem
 from testcontainers.mongodb import MongoDbContainer
 from testcontainers.kafka import KafkaContainer
-from testcontainers.influxdb import InfluxDbContainer
 from testcontainers.core.generic import DockerContainer
 from testcontainers.core.network import Network
 from testcontainers.core.waiting_utils import wait_for_logs
@@ -174,51 +172,6 @@ def config_api(
     # No cleanup needed for in-memory mock
 
 
-@pytest.fixture(scope="session")
-def influx_container(network: Network) -> Generator[InfluxDbContainer, None, None]:
-    env = {
-        "INFLUXDB_ADMIN_USER": "test",
-        "INFLUXDB_ADMIN_PASSWORD": "test",
-    }
-    with InfluxDbContainer(
-        "influxdb:1.11",
-        name="test-manager-influx",
-        env=env,
-        network=network,
-    ) as influx:
-        yield influx
-
-
-@pytest.fixture()
-def influx(
-    monkeypatch: pytest.MonkeyPatch, influx_container: InfluxDbContainer
-) -> Generator[InfluxDBClient, None, None]:
-    host = influx_container.get_container_host_ip()
-    port = str(influx_container.get_exposed_port(8086))
-    user = influx_container.env["INFLUXDB_ADMIN_USER"]
-    password = influx_container.env["INFLUXDB_ADMIN_PASSWORD"]
-    database = "test_manager"
-
-    monkeypatch.setenv("INFLUXDB_HOST", host)
-    monkeypatch.setenv("INFLUXDB_PORT", port)
-    monkeypatch.setenv("INFLUXDB_USER", user)
-    monkeypatch.setenv("INFLUXDB_PASSWORD", password)
-
-    _client = InfluxDBClient(
-        host=host,
-        port=port,
-        username=user,
-        password=password,
-        database=database,
-    )
-
-    yield _client
-
-    for measurement in _client.get_list_measurements():
-        _client.query(f'DROP SERIES FROM "{measurement["name"]}"')
-    _client.close()
-
-
 @pytest.fixture()
 def override_settings(
     client: TestClient,
@@ -241,7 +194,6 @@ def override_settings(
 @pytest.fixture()
 def client(
     mongo: None,
-    influx: InfluxDBClient,
     blob_storage: None,
     config_api: httpx.Client,
     portal_api_url: str,

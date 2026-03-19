@@ -10,7 +10,6 @@ from quixportal import get_filesystem
 
 from ..auth import update_permission, read_permission
 from ..mongo import get_mongo
-from ..influx import Influx, get_influx
 from ..config_api import get_config_api_client
 from ..models import (
     Test,
@@ -372,7 +371,6 @@ def delete_test(
     mongo: Database[dict[str, Any]] = Depends(get_mongo),
     fs: Any = Depends(get_filesystem),
     settings: Settings = Depends(get_settings),
-    influx: Influx = Depends(get_influx),
     config_api: httpx.Client = Depends(get_config_api_client),
     _: None = Depends(update_permission),
 ) -> None:
@@ -401,11 +399,6 @@ def delete_test(
             fs.rm_file(path)
         except FileNotFoundError:
             pass
-
-    # Delete logbook entries from InfluxDB
-    logbook_entries = list(mongo.logbook.find({"test_id": test_id}))
-    for entry in logbook_entries:
-        influx.logbook.delete(entry["_id"])
 
     # Delete logbook entries and test from MongoDB
     mongo.logbook.delete_many({"test_id": test_id})
