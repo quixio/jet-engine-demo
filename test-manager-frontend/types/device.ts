@@ -191,6 +191,6 @@ export interface Product {
 }
 
 export interface ProductCategory {
-  _id: string // Product category key (e.g., "WP")
+  id: string // Product category key (e.g., "WP")
   name: string // Human-readable name (e.g., "Heat Pump")
 }

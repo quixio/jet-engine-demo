@@ -128,7 +128,7 @@ export function DevicePickerDialog({
   }))
 
   const categoryOptions = categories.map((cat) => ({
-    value: cat._id,
+    value: cat.id,
     label: cat.name,
   }))
 

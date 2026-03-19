@@ -60,7 +60,7 @@ export function DevicesFilters({
   }))
 
   const categoryOptions = categories.map((cat) => ({
-    value: cat._id,
+    value: cat.id,
     label: cat.name,
   }))
 

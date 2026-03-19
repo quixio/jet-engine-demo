@@ -413,7 +413,7 @@ class Location(BaseModel):
 class ProductCategory(BaseModel):
     """Represents a product category lookup value."""
 
-    product_category: str = Field(..., alias="_id")  # Business key
+    id: str = Field(..., alias="_id")  # Business key
     name: str  # Human-readable name
 
 
