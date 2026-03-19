@@ -16,11 +16,6 @@ variables:
     multiline: false
     defaultValue: mongodb
     required: true
-  - name: Quix__BlobStorage__Connection__Json
-    inputType: Secret
-    multiline: false
-    defaultValue: Quix__BlobStorage__Connection__Json
-    required: true
   - name: CONFIG_API_URL
     inputType: FreeText
     multiline: false
