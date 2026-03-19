@@ -136,22 +136,6 @@ deployments:
         inputType: FreeText
         required: true
         value: mongodb
-      - name: INFLUXDB_USER
-        inputType: Secret
-        required: true
-        secretKey: INFLUXDB_USER
-      - name: INFLUXDB_PASSWORD
-        inputType: Secret
-        required: true
-        secretKey: INFLUXDB_PASSWORD
-      - name: INFLUXDB_HOST
-        inputType: FreeText
-        required: true
-        value: influxdb
-      - name: INFLUXDB_PORT
-        inputType: FreeText
-        required: true
-        value: 8086
       - name: CONFIG_API_URL
         inputType: FreeText
         required: true
