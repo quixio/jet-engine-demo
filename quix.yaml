@@ -250,3 +250,4 @@ topics:
   - name: config-updates
   - name: edf-data
   - name: normalised-data
+  - name: config-enriched-data
