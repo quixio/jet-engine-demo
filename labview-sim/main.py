@@ -340,7 +340,7 @@ def home_page():
         <script>
             function incrementTestId(testId) {{
                 const parts = testId.split('-');
-                if (parts.length === 2 && /^\d+$/.test(parts[1])) {{
+                if (parts.length === 2 && /^\\d+$/.test(parts[1])) {{
                     const number = parseInt(parts[1]) + 1;
                     return parts[0] + '-' + String(number).padStart(3, '0');
                 }}
