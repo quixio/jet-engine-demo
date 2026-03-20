@@ -83,6 +83,7 @@ deployments:
         required: true
         value: edf-data
   - name: Config Enricher
+    group: Data Ingestion
     application: config-enricher
     version: latest
     deploymentType: Service
