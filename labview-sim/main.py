@@ -113,6 +113,11 @@ def home_page():
                 background-color: #ffffff;
             }}
 
+            input[type="checkbox"] {{
+                margin: 0 6px 0 0;
+                vertical-align: middle;
+            }}
+
             input[type="text"]:focus,
             input[type="number"]:focus {{
                 outline: none;
@@ -448,6 +453,11 @@ def home_page():
                 </div>
 
                 <div class="form-group">
+                    <label for="anomalies">Inject Anomalies:</label>
+                    <input type="checkbox" id="anomalies" name="anomalies">
+                </div>
+
+                <div class="form-group">
                     <label for="holdtime">Hold Time:</label>
                     <div class="combo-box">
                         <input type="text" id="holdtime" name="holdtime" value="30000" required>
@@ -562,7 +572,8 @@ def home_page():
                     shroudid: formData.get('shroudid'),
                     throttle: formData.get('throttle'),
                     operator: formData.get('operator'),
-                    holdtime: formData.get('holdtime')
+                    holdtime: formData.get('holdtime'),
+                    anomalies: document.getElementById('anomalies').checked
                 }};
                 
                 try {{
@@ -732,7 +743,8 @@ def api_submit_test():
             ecu_data = {
                 "test_id": data.get('testid'),
                 "speeds": [data.get('throttle')],
-                "ramp_delay": data.get('holdtime')
+                "ramp_delay": data.get('holdtime'),
+                "anomalies": data.get('anomalies', False)
             }
             
             logger.info(f"ECU data formatted: {json.dumps(ecu_data)}")

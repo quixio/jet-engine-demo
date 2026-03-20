@@ -36,10 +36,14 @@ def build_api_url(endpoint, test_id):
     endpoint = endpoint.rstrip('/')
     return f"{endpoint}/{test_id}"
 
-def run_ecu_test(test_id, ramp_delay, set_speed, start_time):
+def run_ecu_test(test_id, ramp_delay, set_speed, start_time, anomalies=False):
     """Run the ECU test in a background thread."""
     try:
         active_tests[test_id] = {"status": "running", "start_time": time.time()}
+
+        # Anomaly state: tracks remaining ticks of an active anomaly event
+        anomaly_remaining = [0]
+
         def generate_data():
             # Calculate values based on set_speed
             base_voltage = 14.9 - (set_speed * 1.6)
@@ -50,6 +54,18 @@ def run_ecu_test(test_id, ramp_delay, set_speed, start_time):
             voltage_v = base_voltage + random.uniform(-0.1, 0.1)
             current_ma = base_current + random.uniform(-500, 500)
             load_cell_raw_value = base_load_cell + random.uniform(-5000, 5000)
+
+            # Anomaly injection: brief misfire-like events
+            if anomalies:
+                if anomaly_remaining[0] > 0:
+                    # Active anomaly: sharp voltage drop, current spike, thrust dip
+                    voltage_v -= random.uniform(1.5, 3.0)
+                    current_ma += random.uniform(3000, 6000)
+                    load_cell_raw_value -= random.uniform(15000, 30000)
+                    anomaly_remaining[0] -= 1
+                elif random.random() < 0.008:
+                    # ~0.8% chance per tick to trigger a new anomaly (2-4 ticks long)
+                    anomaly_remaining[0] = random.randint(2, 4)
 
             # Current timestamp in milliseconds
             timestamp = int(time.time() * 1000 - start_time)
@@ -142,10 +158,11 @@ def post_data_without_key():
     
     ramp_delay = int(data.get("ramp_delay", 6000))  # Default to 6000ms if not provided
     set_speed = float(data.get("set_speed", 0.5))  # Default to 0.5 if not provided
+    anomalies = bool(data.get("anomalies", False))
     start_time = time.time() * 1000  # Start time in milliseconds
 
     # Start the test in a background thread
-    thread = threading.Thread(target=run_ecu_test, args=(test_id, ramp_delay, set_speed, start_time), daemon=True)
+    thread = threading.Thread(target=run_ecu_test, args=(test_id, ramp_delay, set_speed, start_time, anomalies), daemon=True)
     thread.start()
 
     # Return immediately to the caller
