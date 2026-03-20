@@ -187,6 +187,7 @@ deployments:
         enabled: true
         default: true
   - name: Test Manager - Frontend
+    group: Test Manager
     application: test-manager-frontend
     version: latest
     deploymentType: Service
