@@ -7,6 +7,7 @@ metadata:
 # This section describes the Deployments of the data pipeline
 deployments:
   - name: LabTECH
+    group: Simulator
     application: labview-sim
     version: latest
     deploymentType: Service
