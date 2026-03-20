@@ -20,7 +20,7 @@ deployments:
     variables:
       - name: TEST_API_URL
         inputType: FreeText
-        value: http://test-manager-backend:8080/api/v1/tests
+        value: http://test-manager-backend/api/v1/tests
       - name: ECU_API_URL
         inputType: FreeText
         value: http://ecu/ecu/start
