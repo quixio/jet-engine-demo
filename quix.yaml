@@ -23,7 +23,7 @@ deployments:
         value: http://test-manager-backend:80/api/v1/tests
       - name: ECU_API_URL
         inputType: FreeText
-        value: https://ecu/ecu/start
+        value: http://ecu/ecu/start
       - name: API_TOKEN
         inputType: Secret
         secretKey: API_TOKEN
@@ -50,10 +50,13 @@ deployments:
       urlPrefix: ecu
     network:
       serviceName: ecu
+      ports:
+        - port: 80
+          targetPort: 80
     variables:
       - name: data_api_endpoint
         inputType: FreeText
-        value: https://test-rig-data-api/data
+        value: http://test-rig-data-api/data
   - name: test-rig-data
     application: test-rig-data
     version: latest
@@ -67,6 +70,9 @@ deployments:
       urlPrefix: test-rig-data
     network:
       serviceName: test-rig-data-api
+      ports:
+        - port: 80
+          targetPort: 80
     variables:
       - name: output
         inputType: OutputTopic
@@ -166,7 +172,7 @@ deployments:
       topic: config-updates
       mongoHost: mongodb
       mongoPort: 27017
-      mongoUser: test-manager
+      mongoUser: admin
       mongoPasswordSecret: MONGO_PASSWORD
       mongoDatabase: quix
       mongoCollection: configuration-api
