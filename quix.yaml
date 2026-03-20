@@ -145,7 +145,7 @@ deployments:
       - name: CONFIG_API_URL
         inputType: FreeText
         required: true
-        value: https://config-api-svc-quixers-jetturbinedemo-dev.az-france-0.app.quix.io
+        value: {{CONFIG_API_URL}}
       - name: MEASUREMENTS_URL
         inputType: FreeText
         required: true
