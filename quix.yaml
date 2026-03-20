@@ -145,7 +145,7 @@ deployments:
       - name: CONFIG_API_URL
         inputType: FreeText
         required: true
-        value: {{CONFIG_API_URL}}
+        value: http://config-api-svc
       - name: MEASUREMENTS_URL
         inputType: FreeText
         required: true
