@@ -18,7 +18,7 @@ service_url = os.getenv("Quix__Deployment__Network__PublicUrl")
 data_api_endpoint = os.getenv("data_api_endpoint", "")
 test_api_url = os.getenv("TEST_API_URL", "http://localhost:3000/api/v1/tests")
 ecu_api_url = os.getenv("ECU_API_URL", "http://localhost:3001/api/ecu")
-api_token = os.getenv("API_TOKEN", "")
+api_token = os.getenv("API_TOKEN", os.getenv("Quix__Sdk__Token", ""))
 
 logger = get_logger()
 
