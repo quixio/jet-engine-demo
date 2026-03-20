@@ -116,6 +116,7 @@ deployments:
         required: true
         secretKey: config_sdk_token
   - name: Test Manager - Backend
+    group: Test Manager
     application: test-manager-backend
     version: latest
     deploymentType: Service
