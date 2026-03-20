@@ -240,6 +240,7 @@ deployments:
         icon: build
         order: 0
   - name: Data normalisation
+    group: Data Ingestion
     application: data-normalisation
     version: latest
     deploymentType: Service
