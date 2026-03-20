@@ -364,6 +364,7 @@ deployments:
     configuration:
       topic: config-enriched-data
   - name: Marimo
+    group: Test Manager
     application: marimo
     version: latest
     deploymentType: Service
@@ -401,6 +402,7 @@ deployments:
       sidebarItem:
         show: true
         icon: note_alt
+        order: 0
         badge: BETA
 
 # This section describes the Topics of the data pipeline
