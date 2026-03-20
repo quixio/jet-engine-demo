@@ -284,6 +284,7 @@ deployments:
         required: true
         secretKey: MONGO_PASSWORD
   - name: Quix DataLake Timeseries Sink
+    group: Data Ingestion
     application: quix-datalake-timeseries-sink
     version: latest
     deploymentType: Service
