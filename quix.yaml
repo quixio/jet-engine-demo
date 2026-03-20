@@ -162,14 +162,21 @@ deployments:
       cpu: 200
       memory: 500
       replicas: 1
+    publicAccess:
+      enabled: true
+      urlPrefix: config-api-svc
     configuration:
       topic: config-updates
       mongoHost: mongodb
       mongoPort: 27017
-      mongoUser: test-manager
+      mongoUser: admin
       mongoPasswordSecret: MONGO_PASSWORD
       mongoDatabase: quix
       mongoCollection: configuration-api
+    plugin:
+      embeddedView:
+        enabled: true
+        default: true
   - name: Test Manager - Frontend
     application: test-manager-frontend
     version: latest
