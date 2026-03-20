@@ -60,6 +60,7 @@ deployments:
         inputType: FreeText
         value: http://test-rig-data-api/data
   - name: test-rig-data
+    group: Data Ingestion
     application: test-rig-data
     version: latest
     deploymentType: Service
