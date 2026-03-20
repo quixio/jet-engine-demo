@@ -39,6 +39,7 @@ deployments:
         icon: category
         order: 0
   - name: Rig ECU
+    group: Simulator
     application: rig-ecu
     version: latest
     deploymentType: Service
