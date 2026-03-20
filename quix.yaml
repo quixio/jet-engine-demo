@@ -20,7 +20,7 @@ deployments:
     variables:
       - name: TEST_API_URL
         inputType: FreeText
-        value: http://test-manager-backend:80/api/v1/tests
+        value: http://test-manager-backend:8080/api/v1/tests
       - name: ECU_API_URL
         inputType: FreeText
         value: http://ecu/ecu/start
@@ -168,6 +168,9 @@ deployments:
       cpu: 200
       memory: 500
       replicas: 1
+    publicAccess:
+      enabled: true
+      urlPrefix: config-api-svc
     configuration:
       topic: config-updates
       mongoHost: mongodb
@@ -176,6 +179,10 @@ deployments:
       mongoPasswordSecret: MONGO_PASSWORD
       mongoDatabase: quix
       mongoCollection: configuration-api
+    plugin:
+      embeddedView:
+        enabled: true
+        default: true
   - name: Test Manager - Frontend
     application: test-manager-frontend
     version: latest
