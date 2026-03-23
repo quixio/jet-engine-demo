@@ -1,0 +1,423 @@
+# Quix Project Descriptor
+# This file describes the data pipeline and configuration of resources of a Quix Project.
+
+metadata:
+  version: 1.0
+
+# This section describes the Deployments of the data pipeline
+deployments:
+  - name: LabTECH
+    group: Simulator
+    application: labview-sim
+    version: latest
+    deploymentType: Service
+    resources:
+      cpu: 200
+      memory: 500
+      replicas: 1
+    publicAccess:
+      enabled: true
+      urlPrefix: labview-sim
+    variables:
+      - name: TEST_API_URL
+        inputType: FreeText
+        value: http://test-manager-backend/api/v1/tests
+      - name: ECU_API_URL
+        inputType: FreeText
+        value: http://ecu/ecu/start
+      - name: API_TOKEN
+        inputType: Secret
+        secretKey: API_TOKEN
+    plugin:
+      embeddedView:
+        enabled: true
+        hideHeader: true
+        default: true
+      sidebarItem:
+        show: true
+        label: LabVIEW Sim
+        icon: category
+        order: 0
+  - name: Rig ECU
+    group: Simulator
+    application: rig-ecu
+    version: latest
+    deploymentType: Service
+    resources:
+      cpu: 200
+      memory: 500
+      replicas: 1
+    publicAccess:
+      enabled: true
+      urlPrefix: ecu
+    network:
+      serviceName: ecu
+      ports:
+        - port: 80
+          targetPort: 80
+    variables:
+      - name: data_api_endpoint
+        inputType: FreeText
+        value: http://test-rig-data-api/data
+  - name: test-rig-data
+    group: Data Ingestion
+    application: test-rig-data
+    version: latest
+    deploymentType: Service
+    resources:
+      cpu: 200
+      memory: 500
+      replicas: 1
+    publicAccess:
+      enabled: true
+      urlPrefix: test-rig-data
+    network:
+      serviceName: test-rig-data-api
+      ports:
+        - port: 80
+          targetPort: 80
+    variables:
+      - name: output
+        inputType: OutputTopic
+        description: This is the output topic for hello world data
+        required: true
+        value: edf-data
+  - name: Config Enricher
+    group: Data Ingestion
+    application: config-enricher
+    version: latest
+    deploymentType: Service
+    resources:
+      cpu: 200
+      memory: 500
+      replicas: 1
+    state:
+      enabled: true
+      size: 1
+    variables:
+      - name: DATA_TOPIC
+        inputType: InputTopic
+        description: Name of the ingress data topic.
+        value: normalised-data
+      - name: CONFIG_TOPIC
+        inputType: InputTopic
+        description: Name of the ingress config topic.
+        value: config-updates
+      - name: OUTPUT_TOPIC
+        inputType: OutputTopic
+        description: Name of the output topic to write enriched data to.
+        value: config-enriched-data
+      - name: CONSUMER_GROUP
+        inputType: FreeText
+        description: Consumer group name.
+        required: true
+        value: config-enricher
+      - name: CONFIG_SDK_TOKEN
+        inputType: Secret
+        description: SDK token from the config manager's project
+        required: true
+        secretKey: config_sdk_token
+  - name: Test Manager - Backend
+    group: Test Manager
+    application: test-manager-backend
+    version: latest
+    deploymentType: Service
+    resources:
+      cpu: 500
+      memory: 500
+      replicas: 1
+    publicAccess:
+      enabled: true
+      urlPrefix: backend-api
+    network:
+      serviceName: test-manager-backend
+      ports:
+        - port: 80
+          targetPort: 8080
+    variables:
+      - name: MONGO_USER
+        inputType: Secret
+        required: true
+        secretKey: MONGO_USER
+      - name: MONGO_PASSWORD
+        inputType: Secret
+        required: true
+        secretKey: MONGO_PASSWORD
+      - name: MONGO_HOST
+        inputType: FreeText
+        required: true
+        value: mongodb
+      - name: CONFIG_API_URL
+        inputType: FreeText
+        required: true
+        value: {{CONFIG_API_URL}}
+      - name: MEASUREMENTS_URL
+        inputType: FreeText
+        required: true
+        value: {{MEASUREMENTS_URL}}
+      - name: DATA_LAKE_V2_TOPIC_NAME
+        inputType: FreeText
+        required: true
+        value: {{DATA_LAKE_V2_TOPIC_NAME}}
+      - name: ANALYTICS_URL
+        inputType: FreeText
+        required: true
+        value: {{ANALYTICS_URL}}
+    blobStorage:
+      bind: true
+  - name: Dynamic Configuration Manager
+    group: Data Ingestion
+    application: DynamicConfiguration
+    version: latest
+    deploymentType: Managed
+    resources:
+      cpu: 200
+      memory: 500
+      replicas: 1
+    publicAccess:
+      enabled: true
+      urlPrefix: config-api-svc
+    configuration:
+      topic: config-updates
+      mongoHost: mongodb
+      mongoPort: 27017
+      mongoUser: admin
+      mongoPasswordSecret: MONGO_PASSWORD
+      mongoDatabase: quix
+      mongoCollection: configuration-api
+    plugin:
+      embeddedView:
+        enabled: true
+        default: true
+  - name: Test Manager - Frontend
+    group: Test Manager
+    application: test-manager-frontend
+    version: latest
+    deploymentType: Service
+    resources:
+      cpu: 500
+      memory: 500
+      replicas: 1
+    publicAccess:
+      enabled: true
+      urlPrefix: frontend-7bdbce0
+    network:
+      serviceName: test-manager-frontend
+      ports:
+        - port: 80
+          targetPort: 3000
+    variables:
+      - name: API_URL
+        inputType: FreeText
+        description: Backend API URL for server-side requests (internal Kubernetes service name)
+        required: true
+        value: http://test-manager-backend
+      - name: NODE_ENV
+        inputType: FreeText
+        description: Node environment
+        required: true
+        value: production
+      - name: NEXT_TELEMETRY_DISABLED
+        inputType: FreeText
+        description: Disable Next.js telemetry
+        value: 1
+      - name: MEASUREMENTS_URL
+        inputType: FreeText
+        required: true
+        value: https://query-ui-quixers-testrigdemodatawarehouse-prod.az-france-0.app.quix.io/
+    plugin:
+      embeddedView:
+        enabled: true
+        hideHeader: true
+        default: true
+      sidebarItem:
+        show: true
+        label: Test Manager
+        icon: data_thresholding
+        order: 1
+      globalItem:
+        show: true
+        label: Test Manager
+        icon: build
+        order: 0
+  - name: Data normalisation
+    group: Data Ingestion
+    application: data-normalisation
+    version: latest
+    deploymentType: Service
+    resources:
+      cpu: 200
+      memory: 500
+      replicas: 1
+    variables:
+      - name: input
+        inputType: InputTopic
+        description: Name of the input topic to listen to.
+        value: edf-data
+      - name: output
+        inputType: OutputTopic
+        description: Name of the output topic to write to.
+        value: normalised-data
+  - name: MongoDB
+    group: Test Manager
+    application: mongodb
+    version: latest
+    deploymentType: Service
+    resources:
+      cpu: 200
+      memory: 800
+      replicas: 1
+    network:
+      serviceName: mongodb
+      ports:
+        - port: 27017
+          targetPort: 27017
+    variables:
+      - name: MONGO_INITDB_ROOT_USERNAME
+        inputType: FreeText
+        description: The root username to initialize MongoDB with
+        required: true
+        value: admin
+      - name: MONGO_INITDB_ROOT_PASSWORD
+        inputType: Secret
+        description: The root password to initialize MongoDB with
+        required: true
+        secretKey: MONGO_PASSWORD
+  - name: Quix DataLake Timeseries Sink
+    group: Data Ingestion
+    application: quix-datalake-timeseries-sink
+    version: latest
+    deploymentType: Service
+    resources:
+      cpu: 200
+      memory: 500
+      replicas: 1
+    variables:
+      - name: input
+        inputType: InputTopic
+        description: Name of the Kafka input topic to consume from
+        required: true
+        value: config-enriched-data
+      - name: TABLE_NAME
+        inputType: FreeText
+        description: Table name for data organization and registration, else defaults to topic name
+        value: config-enriched-data
+      - name: HIVE_COLUMNS
+        inputType: FreeText
+        description: Comma-separated list of columns for Hive partitioning. Include year/month/day/hour to extract from TIMESTAMP_COLUMN (e.g., location,year,month,day,sensor_type)
+        value: campaign_id,environment_id,test_id
+      - name: TIMESTAMP_COLUMN
+        inputType: FreeText
+        description: Column containing timestamp values to extract year/month/day/hour from
+        value: kafka_timestamp
+      - name: CATALOG_URL
+        inputType: FreeText
+        description: REST Catalog URL for optional table registration (leave empty to skip)
+        value: https://iceberg-catalog-quixers-testrigdemodatawarehouse-prod.az-france-0.app.quix.io
+      - name: CATALOG_AUTH_TOKEN
+        inputType: Secret
+        description: If using a catalog, the respective auth token to access it
+        secretKey: catalog_auth_token
+      - name: AUTO_DISCOVER
+        inputType: Options
+        description: Automatically register table in REST Catalog on first write
+        value: true
+      - name: CATALOG_NAMESPACE
+        inputType: FreeText
+        description: Catalog namespace for table registration
+        value: default
+      - name: BATCH_SIZE
+        inputType: FreeText
+        description: Number of messages to batch before writing to storage
+        value: 1000
+      - name: COMMIT_INTERVAL
+        inputType: FreeText
+        description: Kafka commit interval in seconds
+        value: 30
+      - name: KAFKA_KEY_DESERIALIZER
+        inputType: FreeText
+        description: The key deserializer to use
+        value: str
+      - name: KAFKA_VALUE_DESERIALIZER
+        inputType: FreeText
+        description: the value deserializer to use
+        value: json
+      - name: CONSUMER_GROUP
+        inputType: FreeText
+        description: Kafka consumer group name
+        value: s3_direct_sink_v1.0
+      - name: AUTO_OFFSET_RESET
+        inputType: Options
+        description: Where to start consuming if no offset exists
+        value: earliest
+      - name: LOGLEVEL
+        inputType: Options
+        description: Application logging level
+        value: INFO
+      - name: MAX_WRITE_WORKERS
+        inputType: FreeText
+        description: How many files can be written in parallel to storage at once (based on partitioning + batch size)
+        value: 10
+    blobStorage:
+      bind: true
+  - name: Quix DataLake Raw Sink
+    group: Data Ingestion
+    application: DataLake.Sink
+    version: latest
+    deploymentType: Managed
+    resources:
+      cpu: 500
+      memory: 1500
+      replicas: 1
+    configuration:
+      topic: config-enriched-data
+  - name: Marimo
+    group: Test Manager
+    application: marimo
+    version: latest
+    deploymentType: Service
+    resources:
+      cpu: 500
+      memory: 2000
+      replicas: 1
+    publicAccess:
+      enabled: true
+      urlPrefix: marimo
+    state:
+      enabled: true
+      size: 1
+    network:
+      ports:
+        - port: 80
+          targetPort: 8080
+    variables:
+      - name: MARIMO_MODE
+        inputType: Options
+        description: Mode to run Marimo in
+        value: edit
+      - name: MARIMO_NOTEBOOK
+        inputType: FreeText
+        description: The notebook file to open (e.g., main.py)
+        value: main.py
+      - name: ANTHROPIC_API_KEY
+        inputType: Secret
+        description: Token generated from https://platform.claude.com/settings/keys.
+    plugin:
+      embeddedView:
+        enabled: true
+        hideHeader: true
+        default: true
+      sidebarItem:
+        show: true
+        icon: note_alt
+        order: 0
+        badge: BETA
+
+# This section describes the Topics of the data pipeline
+topics:
+  - name: http-source
+  - name: config-updates
+  - name: edf-data
+  - name: normalised-data
+  - name: config-enriched-data
+  - name: tsbs_data_transformed

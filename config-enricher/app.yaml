@@ -1,0 +1,28 @@
+name: Data Prepper
+language: python
+variables:
+  - name: DATA_TOPIC
+    inputType: InputTopic
+    description: Name of the ingress data topic.
+    defaultValue: data-topic
+  - name: CONFIG_TOPIC
+    inputType: InputTopic
+    description: Name of the ingress config topic.
+    defaultValue: config-topic
+  - name: OUTPUT_TOPIC
+    inputType: OutputTopic
+    description: Name of the output topic to write enriched data to.
+    defaultValue: prepped-data
+  - name: CONSUMER_GROUP
+    inputType: FreeText
+    description: Consumer group name.
+    defaultValue: data-prepper
+    required: true
+  - name: CONFIG_SDK_TOKEN
+    inputType: Secret
+    description: SDK token from the config manager's project
+    required: true
+dockerfile: dockerfile
+runEntryPoint: main.py
+defaultFile: main.py
+libraryItemId: starter-transformation

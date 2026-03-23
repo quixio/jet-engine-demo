@@ -1,0 +1,18 @@
+name: labview-sim
+language: python
+variables:
+  - name: TEST_API_URL
+    inputType: FreeText
+    multiline: false
+    defaultValue: https://backend-api-quixers-quixtestmanager-new.az-france-0.app.quix.io/api/v1/tests
+  - name: ECU_API_URL
+    inputType: FreeText
+    multiline: false
+    defaultValue: https://ecu-quixers-testrigdemotestrigsimulator-prod.az-france-0.app.quix.io/ecu/start
+  - name: API_TOKEN
+    inputType: Secret
+    multiline: false
+dockerfile: dockerfile
+runEntryPoint: main.py
+defaultFile: main.py
+libraryItemId: web-api-gateway
