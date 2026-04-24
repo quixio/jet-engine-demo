@@ -401,7 +401,7 @@ deployments:
         value: main.py
       - name: ANTHROPIC_API_KEY
         inputType: Secret
-        description: Token generated from https://platform.claude.com/settings/keys.
+        description: Token generated from https://platform.claude.com/settings/keys. uses quix-lake-demo-api-key
     plugin:
       embeddedView:
         enabled: true
@@ -440,7 +440,7 @@ deployments:
         value: http://iceberg-catalog:80
       - name: ANTHROPIC_API_KEY
         inputType: Secret
-        description: AWS Secret Access Key (leave empty to use IAM roles)
+        description: AWS Secret Access Key (leave empty to use IAM roles) uses quix-lake-demo-api-key
         secretKey: ANTHROPIC_API_KEY
     blobStorage:
       bind: true
