@@ -27,6 +27,7 @@ def _(os):
 
     QUIXLAKE_URL = os.environ["quix_lake_api_url"]
     print(QUIXLAKE_URL)
+    print(os.environ["Quix__Sdk__Token"])
     client = QuixLakeClient(
         base_url=QUIXLAKE_URL,
         token=os.environ["Quix__Sdk__Token"],
@@ -38,7 +39,7 @@ def _(os):
 def _(client):
     # Load all data once for the dashboard
     all_data = client.query("SELECT * FROM config_enriched_data")
-
+    print(all_data)
     # Get unique campaigns and tests
     campaigns = sorted(all_data["campaign_id"].dropna().unique().tolist())
     all_tests = sorted(all_data["test_id"].dropna().unique().tolist())
