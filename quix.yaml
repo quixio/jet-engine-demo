@@ -333,7 +333,7 @@ deployments:
       - name: COMMIT_INTERVAL
         inputType: FreeText
         description: Kafka commit interval in seconds
-        value: 30
+        value: 10
       - name: KAFKA_KEY_DESERIALIZER
         inputType: FreeText
         description: The key deserializer to use
