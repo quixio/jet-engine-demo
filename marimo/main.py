@@ -26,7 +26,7 @@ def _(os):
     from quixlake import QuixLakeClient
 
     QUIXLAKE_URL = os.environ["quix_lake_api_url"]
-
+    print(QUIXLAKE_URL)
     client = QuixLakeClient(
         base_url=QUIXLAKE_URL,
         token=os.environ["Quix__Sdk__Token"],
