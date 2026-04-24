@@ -453,7 +453,7 @@ deployments:
       bind: true
   - name: Quix TS Query UI
     group: QuixLake
-    image: quixcontainerregistry.azurecr.io/quix-datalake-ts-ui:20260407.2-gcp-fix
+    image: quixcontainerregistry.azurecr.io/quix-datalake-ts-ui:latest
     deploymentType: Service
     resources:
       cpu: 200
