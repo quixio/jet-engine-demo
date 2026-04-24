@@ -402,6 +402,7 @@ deployments:
       - name: ANTHROPIC_API_KEY
         inputType: Secret
         description: Token generated from https://platform.claude.com/settings/keys. uses quix-lake-demo-api-key
+        secretKey: quix_lake_demo_api_key__claude
     plugin:
       embeddedView:
         enabled: true
