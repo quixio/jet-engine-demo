@@ -367,7 +367,7 @@ deployments:
     deploymentType: Managed
     resources:
       cpu: 500
-      memory: 1500
+      memory: 750
       replicas: 1
     configuration:
       topic: config-enriched-data
@@ -378,7 +378,7 @@ deployments:
     deploymentType: Service
     resources:
       cpu: 500
-      memory: 2000
+      memory: 1500
       replicas: 1
     publicAccess:
       enabled: true
@@ -419,7 +419,7 @@ deployments:
     deploymentType: Service
     resources:
       cpu: 1000
-      memory: 2000
+      memory: 1500
       replicas: 1
     publicAccess:
       enabled: true
