@@ -477,12 +477,12 @@ deployments:
         show: true
         label: Data Explorer
         icon: search
-        order: 0
+        order: 2
       globalItem:
         show: true
         label: Data Explorer
-        icon: data_usage
-        order: 0
+        icon: search
+        order: 2
   - name: Quix TS Datalake Catalog
     group: QuixLake
     image: quixcontainerregistry.azurecr.io/quix-datalake-ts-catalog:20260407.2-gcp-fix
