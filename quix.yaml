@@ -403,6 +403,10 @@ deployments:
         inputType: Secret
         description: Token generated from https://platform.claude.com/settings/keys.
         secretKey: quix_lake_demo_api_key__claude
+      - name: quix_lake_api_url
+        inputType: FreeText
+        description: URL for Quix Lake API
+        value: http://quixlake-api
     plugin:
       embeddedView:
         enabled: true
