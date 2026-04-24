@@ -459,7 +459,7 @@ deployments:
         inputType: FreeText
         description: URL of the DuckDB Query API service to connect to
         required: true
-        value: http://quixlake
+        value: http://quixlake-api
       - name: DEBUG_LOG_LEVEL
         inputType: FreeText
         description: debug logging level
