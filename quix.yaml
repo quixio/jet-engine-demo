@@ -301,7 +301,7 @@ deployments:
       - name: TABLE_NAME
         inputType: FreeText
         description: Table name for data organization and registration, else defaults to topic name
-        value: config-enriched-data
+        value: config_enriched_data
       - name: HIVE_COLUMNS
         inputType: FreeText
         description: Comma-separated list of columns for Hive partitioning. Include year/month/day/hour to extract from TIMESTAMP_COLUMN (e.g., location,year,month,day,sensor_type)
@@ -345,7 +345,7 @@ deployments:
       - name: CONSUMER_GROUP
         inputType: FreeText
         description: Kafka consumer group name
-        value: s3_direct_sink_v1.0
+        value: s3_direct_sink_v1.1
       - name: AUTO_OFFSET_RESET
         inputType: Options
         description: Where to start consuming if no offset exists
@@ -401,7 +401,8 @@ deployments:
         value: main.py
       - name: ANTHROPIC_API_KEY
         inputType: Secret
-        description: Token generated from https://platform.claude.com/settings/keys.
+        description: Token generated from https://platform.claude.com/settings/keys. uses quix-lake-demo-api-key
+        secretKey: quix_lake_demo_api_key__claude
     plugin:
       embeddedView:
         enabled: true
@@ -412,6 +413,153 @@ deployments:
         icon: note_alt
         order: 0
         badge: BETA
+  - name: Quix TS Datalake API
+    group: QuixLake
+    image: quixcontainerregistry.azurecr.io/quix-datalake-ts-api:20260407.2-gcp-fix
+    deploymentType: Service
+    resources:
+      cpu: 1000
+      memory: 6000
+      replicas: 1
+    publicAccess:
+      enabled: true
+      urlPrefix: quixlake
+    state:
+      enabled: true
+      size: 1
+    network:
+      serviceName: quixlake
+      ports:
+        - port: 80
+          targetPort: 80
+    variables:
+      - name: CATALOG_URL
+        inputType: FreeText
+        description: REST Catalog service URL
+        value: http://iceberg-catalog:80
+      - name: ANTHROPIC_API_KEY
+        inputType: Secret
+        description: AWS Secret Access Key (leave empty to use IAM roles) uses quix-lake-demo-api-key
+        secretKey: quix_lake_demo_api_key__claude
+    blobStorage:
+      bind: true
+  - name: Quix TS Query UI
+    group: QuixLake
+    image: quixcontainerregistry.azurecr.io/quix-datalake-ts-ui:20260407.2-gcp-fix
+    deploymentType: Service
+    resources:
+      cpu: 200
+      memory: 500
+      replicas: 1
+    publicAccess:
+      enabled: true
+      urlPrefix: query-ui
+    variables:
+      - name: QUERY_API_URL
+        inputType: FreeText
+        description: URL of the DuckDB Query API service to connect to
+        required: true
+        value: http://quixlake
+      - name: DEBUG_LOG_LEVEL
+        inputType: FreeText
+        description: debug logging level
+        value: DEBUG
+    plugin:
+      embeddedView:
+        enabled: true
+        hideHeader: true
+        default: true
+      sidebarItem:
+        show: true
+        label: Data Explorer
+        icon: search
+        order: 0
+      globalItem:
+        show: true
+        label: Data Explorer
+        icon: data_usage
+        order: 0
+  - name: Quix TS Datalake Catalog
+    group: QuixLake
+    image: quixcontainerregistry.azurecr.io/quix-datalake-ts-catalog:20260407.2-gcp-fix
+    deploymentType: Service
+    resources:
+      cpu: 200
+      memory: 500
+      replicas: 1
+    publicAccess:
+      enabled: true
+      urlPrefix: iceberg-catalog
+    network:
+      serviceName: iceberg-catalog
+      ports:
+        - port: 80
+          targetPort: 5001
+    variables:
+      - name: CATALOG_PREFIX
+        inputType: FreeText
+        description: S3 prefix/folder for catalog metadata
+        value: catalog
+      - name: PORT
+        inputType: FreeText
+        description: Port for the REST catalog service
+        value: 5001
+      - name: POSTGRES_HOST
+        inputType: FreeText
+        description: PostgreSQL host address
+        value: postgresql
+      - name: POSTGRES_PORT
+        inputType: FreeText
+        description: PostgreSQL port
+        value: 80
+      - name: POSTGRES_DB
+        inputType: FreeText
+        description: PostgreSQL database name
+        value: iceberg_catalog
+      - name: POSTGRES_USER
+        inputType: FreeText
+        description: PostgreSQL username
+        value: admin
+      - name: POSTGRES_PASSWORD
+        inputType: Secret
+        description: PostgreSQL password
+        secretKey: postgres_password
+      - name: CATALOG_BACKEND
+        inputType: FreeText
+        required: true
+        value: postgres
+    blobStorage:
+      bind: true
+  - name: postgreSQL
+    group: QuixLake
+    application: postgresql
+    version: latest
+    deploymentType: Service
+    resources:
+      cpu: 200
+      memory: 2000
+      replicas: 1
+    network:
+      serviceName: postgresql
+      ports:
+        - port: 80
+          targetPort: 5432
+    variables:
+      - name: POSTGRES_USER
+        inputType: FreeText
+        description: The root username to initialize PostgreSQL with
+        required: true
+        value: admin
+      - name: POSTGRES_PASSWORD
+        inputType: Secret
+        description: The root password to initialize MongoDB with
+        required: true
+        secretKey: postgres_password
+      - name: POSTGRES_DB
+        inputType: FreeText
+        description: The default database name to initialize PostgreSQL with
+        required: true
+        value: quix
 
 # This section describes the Topics of the data pipeline
 topics:
