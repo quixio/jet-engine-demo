@@ -423,12 +423,12 @@ deployments:
       replicas: 1
     publicAccess:
       enabled: true
-      urlPrefix: quixlake
+      urlPrefix: quixlake-api
     state:
       enabled: true
       size: 1
     network:
-      serviceName: quixlake
+      serviceName: quixlake-api
       ports:
         - port: 80
           targetPort: 80
