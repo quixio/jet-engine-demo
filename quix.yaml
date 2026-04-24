@@ -239,7 +239,7 @@ deployments:
         show: true
         label: Test Manager
         icon: build
-        order: 0
+        order: 1
   - name: Data normalisation
     group: Data Ingestion
     application: data-normalisation
