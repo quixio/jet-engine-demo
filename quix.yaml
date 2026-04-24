@@ -38,6 +38,11 @@ deployments:
         label: LabVIEW Sim
         icon: category
         order: 0
+      globalItem:
+        show: true
+        label: LabVIEW Sim
+        icon: category
+        order: 0
   - name: Rig ECU
     group: Simulator
     application: rig-ecu
