@@ -412,11 +412,9 @@ deployments:
         icon: note_alt
         order: 0
         badge: BETA
-
-
   - name: Quix TS Datalake API
-    image: quixcontainerregistry.azurecr.io/quix-datalake-ts-api:20260407.2-gcp-fix
     group: QuixLake
+    image: quixcontainerregistry.azurecr.io/quix-datalake-ts-api:20260407.2-gcp-fix
     deploymentType: Service
     resources:
       cpu: 1000
@@ -441,12 +439,12 @@ deployments:
       - name: ANTHROPIC_API_KEY
         inputType: Secret
         description: AWS Secret Access Key (leave empty to use IAM roles) uses quix-lake-demo-api-key
-        secretKey: ANTHROPIC_API_KEY
+        secretKey: quix_lake_demo_api_key__claude
     blobStorage:
       bind: true
   - name: Quix TS Query UI
-    image: quixcontainerregistry.azurecr.io/quix-datalake-ts-ui:20260407.2-gcp-fix
     group: QuixLake
+    image: quixcontainerregistry.azurecr.io/quix-datalake-ts-ui:20260407.2-gcp-fix
     deploymentType: Service
     resources:
       cpu: 200
@@ -481,8 +479,8 @@ deployments:
         icon: data_usage
         order: 0
   - name: Quix TS Datalake Catalog
-    image: quixcontainerregistry.azurecr.io/quix-datalake-ts-catalog:20260407.2-gcp-fix
     group: QuixLake
+    image: quixcontainerregistry.azurecr.io/quix-datalake-ts-catalog:20260407.2-gcp-fix
     deploymentType: Service
     resources:
       cpu: 200
@@ -532,8 +530,8 @@ deployments:
     blobStorage:
       bind: true
   - name: postgreSQL
-    application: postgresql
     group: QuixLake
+    application: postgresql
     version: latest
     deploymentType: Service
     resources:
@@ -561,8 +559,6 @@ deployments:
         description: The default database name to initialize PostgreSQL with
         required: true
         value: quix
-
-
 
 # This section describes the Topics of the data pipeline
 topics:
