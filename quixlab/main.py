@@ -11,10 +11,7 @@ Environment:
 
 import quixlab as ql
 
-canvas = ql.Canvas(
-    title="Jet Engine Test Rig Dashboard",
-    lake_tree_open=["config-enriched-data"],
-)
+canvas = ql.Canvas(title="Jet Engine Test Rig Dashboard", lake_tree_open=['config-enriched-data', 'config_enriched_data', 'config_enriched_data/campaign_id=CAMP-2024-002', 'config_enriched_data/campaign_id=CAMP-2024-003', 'config_enriched_data/campaign_id=CAMP-2024-003/environment_id=Lab-A-01'])
 
 
 # ── Header ──────────────────────────────────────────────────────────────────
@@ -29,13 +26,18 @@ def header():
 
 
 # ── Data load ──────────────────────────────────────────────────────────────
-@canvas.dataset(position=(-1096, 1), size=(1198, 461), code_height=160)
+@canvas.dataset(position=(-1281, -63), size=(1198, 461), code_height=160, viz={'exportGlobal': False})
 def all_data():
-    return ql.sql("""SELECT * FROM config-enriched-data""")
+    return ql.sql("""SELECT *
+    FROM config_enriched_data
+    WHERE campaign_id = 'CAMP-2024-003'
+      AND environment_id = 'Lab-A-01'
+      AND test_id = 'TEST-003'
+    LIMIT 100""")
 
 
 # ── Campaign overview ──────────────────────────────────────────────────────
-@canvas.cell(position=(60, 470), size=(1760, 60), code_height=120)
+@canvas.cell(position=(58, 859), size=(1760, 60), code_height=120)
 def campaign_overview_title():
     return ql.ui.markdown("## Campaign Overview")
 
@@ -221,7 +223,7 @@ def stats_table(selected_df):
 
 
 # ── Test comparison (two tests overlaid) ───────────────────────────────────
-@canvas.cell(position=(60, 2860), size=(1760, 60), code_height=120)
+@canvas.cell(position=(68, 2765), size=(1760, 60), code_height=120)
 def compare_title():
     return ql.ui.markdown(
         """
@@ -304,11 +306,6 @@ def compare_plot(all_data, compare_a, compare_b):
     fig.update_yaxes(title_text="mA", row=2, col=1)
     fig.update_yaxes(title_text="Raw", row=3, col=1)
     return fig
-
-
-@canvas.cell(position=(-1089, 509), size=(1136, 224), code_height=200, viz={'storagePath': 'quixers-jetturbinedemo-dev', 'storageType': 'folder'})
-def quixers_jetturbinedemo_dev():
-    ql.StorageFolder("quixers-jetturbinedemo-dev")
 
 
 if __name__ == "__main__":
