@@ -5,7 +5,7 @@
 
 import marimo
 
-__generated_with = "0.23.2"
+__generated_with = "0.21.1"
 app = marimo.App(width="full")
 
 
@@ -18,48 +18,50 @@ def _():
     import plotly.graph_objects as go
     from plotly.subplots import make_subplots
 
-    return go, make_subplots, mo, os, pd, px
+    return go, mo, os, pd, px, make_subplots
 
 
 @app.cell
-def _(os):
+def _(mo, os):
     from quixlake import QuixLakeClient
 
-    QUIXLAKE_URL = os.environ["quix_lake_api_url"]
-    print(QUIXLAKE_URL)
-    print(os.environ["Quix__Sdk__Token"])
+    QUIXLAKE_URL = "https://quixlake-quixers-testrigdemodatawarehouse-prod.az-france-0.app.quix.io"
+
     client = QuixLakeClient(
         base_url=QUIXLAKE_URL,
         token=os.environ["Quix__Sdk__Token"],
     )
-    return (client,)
+    return QuixLakeClient, client
 
 
 @app.cell
-def _(client):
+def _(client, pd):
     # Load all data once for the dashboard
-    all_data = client.query("SELECT * FROM config_enriched_data")
-    print(all_data)
+    all_data = client.query("SELECT * FROM config-enriched-data")
+
     # Get unique campaigns and tests
     campaigns = sorted(all_data["campaign_id"].dropna().unique().tolist())
     all_tests = sorted(all_data["test_id"].dropna().unique().tolist())
-    return all_data, all_tests, campaigns
+
+    return all_data, campaigns, all_tests
 
 
+# ── Header ──────────────────────────────────────────────────────────────────
 @app.cell
 def _(mo):
-    mo.md(r"""
-    # Jet Engine Test Rig Dashboard
-    Interactive explorer for thrust-stand telemetry stored in QuixLake.
-    """)
+    mo.md(
+        r"""
+        # Jet Engine Test Rig Dashboard
+        Interactive explorer for thrust-stand telemetry stored in QuixLake.
+        """
+    )
     return
 
 
+# ── Section 5: Campaign Overview ────────────────────────────────────────────
 @app.cell
 def _(mo):
-    mo.md(r"""
-    ## Campaign Overview
-    """)
+    mo.md(r"""## Campaign Overview""")
     return
 
 
@@ -108,11 +110,10 @@ def _(all_data, mo, px):
     return
 
 
+# ── Section 1: Test Selector ────────────────────────────────────────────────
 @app.cell
 def _(mo):
-    mo.md(r"""
-    ## Test Selector
-    """)
+    mo.md(r"""## Test Selector""")
     return
 
 
@@ -142,7 +143,7 @@ def _(all_data, campaign_dropdown, mo):
         label="Test",
     )
     test_dropdown
-    return (test_dropdown,)
+    return test_dropdown, tests_in_campaign
 
 
 @app.cell
@@ -162,11 +163,10 @@ def _(all_data, campaign_dropdown, test_dropdown):
     return (selected_df,)
 
 
+# ── Section 2: Waveform Plots ───────────────────────────────────────────────
 @app.cell
 def _(mo):
-    mo.md(r"""
-    ## Waveform Plots
-    """)
+    mo.md(r"""## Waveform Plots""")
     return
 
 
@@ -233,11 +233,10 @@ def _(go, make_subplots, mo, selected_df):
     return
 
 
+# ── Section 4: Summary Statistics ───────────────────────────────────────────
 @app.cell
 def _(mo):
-    mo.md(r"""
-    ## Summary Statistics
-    """)
+    mo.md(r"""## Summary Statistics""")
     return
 
 
@@ -268,11 +267,10 @@ def _(mo, pd, selected_df):
     return
 
 
+# ── Section 3: Test Comparison ──────────────────────────────────────────────
 @app.cell
 def _(mo):
-    mo.md(r"""
-    ## Test Comparison
-    """)
+    mo.md(r"""## Test Comparison""")
     return
 
 

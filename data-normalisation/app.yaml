@@ -10,6 +10,11 @@ variables:
     multiline: false
     description: Name of the output topic to write to.
     defaultValue: normalised-data
+  - name: dead_letter_topic
+    inputType: OutputTopic
+    description: Topic to route malformed or unprocessable messages to.
+    defaultValue: dead-letter-queue
+    required: false
 dockerfile: dockerfile
 runEntryPoint: main.py
 defaultFile: main.py
