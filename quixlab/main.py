@@ -29,7 +29,7 @@ def header():
 
 
 # ── Data load ──────────────────────────────────────────────────────────────
-@canvas.dataset(position=(-1096, 1), size=(1136, 459), code_height=160)
+@canvas.dataset(position=(-1096, 1), size=(1198, 461), code_height=160)
 def all_data():
     return ql.sql("""SELECT * FROM config-enriched-data""")
 
@@ -304,6 +304,11 @@ def compare_plot(all_data, compare_a, compare_b):
     fig.update_yaxes(title_text="mA", row=2, col=1)
     fig.update_yaxes(title_text="Raw", row=3, col=1)
     return fig
+
+
+@canvas.cell(position=(-1089, 509), size=(1136, 224), code_height=200, viz={'storagePath': 'quixers-jetturbinedemo-dev', 'storageType': 'folder'})
+def quixers_jetturbinedemo_dev():
+    ql.StorageFolder("quixers-jetturbinedemo-dev")
 
 
 if __name__ == "__main__":
