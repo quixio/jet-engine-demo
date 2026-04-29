@@ -12,7 +12,7 @@ variables:
   - name: QUIX_LAKE_URL
     inputType: FreeText
     description: Base URL of the QuixLake instance to query against (e.g. https://quixlake-<workspace>.deployments.quix.io). Required for ql.sql() to work outside the default dev environment.
-    defaultValue: https://quixlake-api-demo-jetenginedemo-prod.az-france-0.app.quix.io
+    defaultValue: https://quixlake-api-demo-jetenginedemo-dev.az-france-0.app.quix.io
     required: true
   - name: QUIX_LAKE_TOKEN
     inputType: Secret
