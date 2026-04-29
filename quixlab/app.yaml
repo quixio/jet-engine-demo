@@ -1,0 +1,23 @@
+name: quixlab
+language: docker
+variables:
+  - name: QUIXLAB_NOTEBOOK
+    inputType: FreeText
+    description: Notebook file to open on startup (leave empty for the file picker)
+    defaultValue: main.py
+  - name: QUIXLAB_MODE
+    inputType: FreeText
+    description: "Run mode: 'app' (view only) or 'edit' (full editor)"
+    defaultValue: edit
+  - name: QUIX_LAKE_URL
+    inputType: FreeText
+    description: Base URL of the QuixLake instance to query against (e.g. https://quixlake-<workspace>.deployments.quix.io). Required for ql.sql() to work outside the default dev environment.
+    defaultValue: https://quixlake-api-demo-jetenginedemo-prod.az-france-0.app.quix.io
+    required: true
+  - name: QUIX_LAKE_TOKEN
+    inputType: Secret
+    description: Override token for QuixLake queries. Leave empty to use the platform-injected Quix__Sdk__Token.
+    defaultValue: catalog_auth_token
+dockerfile: dockerfile
+defaultFile: dockerfile
+libraryItemId: quixlab

@@ -1,6 +1,7 @@
 # import the Quix Streams modules for interacting with Kafka.
 # For general info, see https://quix.io/docs/quix-streams/introduction.html
-from quixstreams import Application
+from quixstreams import Application, State
+import time
 import os
 
 # for local dev, load env vars from a .env file
