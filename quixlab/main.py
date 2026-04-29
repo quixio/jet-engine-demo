@@ -29,9 +29,9 @@ def header():
 
 
 # ── Data load ──────────────────────────────────────────────────────────────
-@canvas.dataset(position=(60, 130), size=(560, 320), code_height=160)
+@canvas.dataset(position=(-1085, -6), size=(775, 433), code_height=160)
 def all_data():
-    return ql.sql("SELECT * FROM config-enriched-data")
+    return ql.sql("""SELECT * FROM config-enriched-data""")
 
 
 # ── Campaign overview ──────────────────────────────────────────────────────
