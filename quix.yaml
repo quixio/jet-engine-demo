@@ -258,6 +258,10 @@ deployments:
         inputType: OutputTopic
         description: Name of the output topic to write to.
         value: normalised-data
+      - name: dead_letter_topic
+        inputType: OutputTopic
+        description: Name of the dead letter topic.
+        value: dead-letter-queue
   - name: MongoDB
     group: Test Manager
     application: mongodb
@@ -474,3 +478,4 @@ topics:
   - name: normalised-data
   - name: config-enriched-data
   - name: tsbs_data_transformed
+  - name: dead-letter-queue
