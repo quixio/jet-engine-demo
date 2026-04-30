@@ -72,5 +72,17 @@ def cell_1(blob_folder):
     csv_file.write(blob_folder.files["data_1.txt"].read())
 
 
+@canvas.cell(position=(3735, 879), size=(980, 632), code_height=417)
+def cell_3(blob_folder):
+    from nptdms import TdmsFile
+
+
+    with blob_folder.files["Current_D0.tdms"].open() as f:
+          tdms_file = TdmsFile.read(f)
+
+    df = tdms_file.as_dataframe() 
+    df
+
+
 if __name__ == "__main__":
     canvas.serve()
