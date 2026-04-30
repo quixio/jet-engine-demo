@@ -46,12 +46,22 @@ def experiment():
     [heading, campaign_id, environment_id, test_id]
 
 
-@canvas.notebook(position=(1687, 185), size=(959, 702), code_height=200, viz={'cells': {'0': {'type': 'table', 'x': 'timestamp', 'y': 'ina260__voltage_v'}, '1': {'type': 'line', 'x': 'timestamp', 'y': 'ina260__voltage_v'}}, 'outputCell': 1, 'outputCells': [1, 2], 'type': 'line', 'x': 'timestamp', 'y': ['timestamp_diff']})
+@canvas.notebook(position=(1837, 185), size=(959, 702), code_height=200, viz={'cells': {'0': {'type': 'table', 'x': 'timestamp', 'y': 'ina260__voltage_v'}, '1': {'type': 'line', 'x': 'timestamp', 'y': 'ina260__voltage_v'}}, 'outputCells': [1, 2], 'type': 'line', 'x': 'timestamp', 'y': ['timestamp_diff']})
 def cell_2(config_enriched_data):
     # %%
     config_enriched_data["timestamp_diff"] = config_enriched_data["timestamp"].diff()
     # %%
     config_enriched_data
+
+
+@canvas.cell(position=(3013, 162), size=(977, 577), code_height=200, viz={'storagePath': '', 'storageType': 'folder'})
+def blob_folder():
+    ql.StorageFolder("")
+
+
+@canvas.cell(position=(2995, 760), size=(350, 450), code_height=200, viz={'storagePath': 'demo-jetenginedemo-prod', 'storageType': 'folder'})
+def demo_jetenginedemo_prod():
+    ql.StorageFolder("demo-jetenginedemo-prod")
 
 
 if __name__ == "__main__":
