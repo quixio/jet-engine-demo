@@ -54,7 +54,7 @@ def cell_2(config_enriched_data):
     config_enriched_data
 
 
-@canvas.cell(position=(3013, 162), size=(977, 577), code_height=200, viz={'storagePath': '', 'storageType': 'folder'})
+@canvas.cell(position=(2981, 21), size=(977, 577), code_height=200, viz={'storagePath': '', 'storageType': 'folder'})
 def blob_folder():
     ql.StorageFolder("")
 
@@ -62,6 +62,14 @@ def blob_folder():
 @canvas.cell(position=(2995, 760), size=(350, 450), code_height=200, viz={'storagePath': 'demo-jetenginedemo-prod', 'storageType': 'folder'})
 def demo_jetenginedemo_prod():
     ql.StorageFolder("demo-jetenginedemo-prod")
+
+
+@canvas.cell(position=(4018, 21), size=(890, 657), code_height=200)
+def cell_1(blob_folder):
+    import pandas as pd
+
+    csv_file = blob_folder.create_file("data_1.csv")
+    csv_file.write(blob_folder.files["data_1.txt"].read())
 
 
 if __name__ == "__main__":
