@@ -38,6 +38,11 @@ deployments:
         label: LabVIEW Sim
         icon: category
         order: 0
+      globalItem:
+        show: true
+        label: LabVIEW Sim
+        icon: category
+        order: 0
   - name: Rig ECU
     group: Simulator
     application: rig-ecu
@@ -239,7 +244,7 @@ deployments:
         show: true
         label: Test Manager
         icon: build
-        order: 0
+        order: 1
   - name: Data normalisation
     group: Data Ingestion
     application: data-normalisation
@@ -301,7 +306,7 @@ deployments:
       - name: TABLE_NAME
         inputType: FreeText
         description: Table name for data organization and registration, else defaults to topic name
-        value: config-enriched-data
+        value: config_enriched_data
       - name: HIVE_COLUMNS
         inputType: FreeText
         description: Comma-separated list of columns for Hive partitioning. Include year/month/day/hour to extract from TIMESTAMP_COLUMN (e.g., location,year,month,day,sensor_type)
@@ -313,7 +318,7 @@ deployments:
       - name: CATALOG_URL
         inputType: FreeText
         description: REST Catalog URL for optional table registration (leave empty to skip)
-        value: https://iceberg-catalog-quixers-testrigdemodatawarehouse-prod.az-france-0.app.quix.io
+        value: http://iceberg-catalog
       - name: CATALOG_AUTH_TOKEN
         inputType: Secret
         description: If using a catalog, the respective auth token to access it
@@ -333,7 +338,7 @@ deployments:
       - name: COMMIT_INTERVAL
         inputType: FreeText
         description: Kafka commit interval in seconds
-        value: 30
+        value: 10
       - name: KAFKA_KEY_DESERIALIZER
         inputType: FreeText
         description: The key deserializer to use
@@ -345,7 +350,7 @@ deployments:
       - name: CONSUMER_GROUP
         inputType: FreeText
         description: Kafka consumer group name
-        value: s3_direct_sink_v1.0
+        value: s3_direct_sink_v1.1
       - name: AUTO_OFFSET_RESET
         inputType: Options
         description: Where to start consuming if no offset exists
@@ -367,7 +372,7 @@ deployments:
     deploymentType: Managed
     resources:
       cpu: 500
-      memory: 1500
+      memory: 750
       replicas: 1
     configuration:
       topic: config-enriched-data
@@ -378,7 +383,7 @@ deployments:
     deploymentType: Service
     resources:
       cpu: 500
-      memory: 2000
+      memory: 1500
       replicas: 1
     publicAccess:
       enabled: true
@@ -402,6 +407,11 @@ deployments:
       - name: ANTHROPIC_API_KEY
         inputType: Secret
         description: Token generated from https://platform.claude.com/settings/keys.
+        secretKey: quix_lake_demo_api_key__claude
+      - name: quix_lake_api_url
+        inputType: FreeText
+        description: URL for Quix Lake API
+        value: http://quixlake-api
     plugin:
       embeddedView:
         enabled: true
@@ -410,8 +420,212 @@ deployments:
       sidebarItem:
         show: true
         icon: note_alt
-        order: 0
+        order: 3
         badge: BETA
+      globalItem:
+        show: true
+        icon: note_alt
+        order: 3
+  - name: Quix TS Datalake API
+    group: QuixLake
+    image: quixcontainerregistry.azurecr.io/quix-datalake-ts-api:20260407.2-gcp-fix
+    deploymentType: Service
+    resources:
+      cpu: 1000
+      memory: 1500
+      replicas: 1
+    publicAccess:
+      enabled: true
+      urlPrefix: quixlake-api
+    state:
+      enabled: true
+      size: 1
+    network:
+      serviceName: quixlake-api
+      ports:
+        - port: 80
+          targetPort: 80
+    variables:
+      - name: CATALOG_URL
+        inputType: FreeText
+        description: REST Catalog service URL
+        value: http://iceberg-catalog:80
+      - name: ANTHROPIC_API_KEY
+        inputType: Secret
+        description: AWS Secret Access Key (leave empty to use IAM roles) uses quix-lake-demo-api-key
+        secretKey: quix_lake_demo_api_key__claude
+    blobStorage:
+      bind: true
+  - name: Quix TS Query UI
+    group: QuixLake
+    image: quixcontainerregistry.azurecr.io/quix-datalake-ts-ui:latest
+    deploymentType: Service
+    resources:
+      cpu: 200
+      memory: 500
+      replicas: 1
+    publicAccess:
+      enabled: true
+      urlPrefix: query-ui
+    variables:
+      - name: QUERY_API_URL
+        inputType: FreeText
+        description: URL of the DuckDB Query API service to connect to
+        required: true
+        value: http://quixlake-api
+      - name: DEBUG_LOG_LEVEL
+        inputType: FreeText
+        description: debug logging level
+        value: DEBUG
+    plugin:
+      embeddedView:
+        enabled: true
+        hideHeader: true
+        default: true
+      sidebarItem:
+        show: true
+        label: Data Explorer
+        icon: search
+        order: 2
+      globalItem:
+        show: true
+        label: Data Explorer
+        icon: search
+        order: 2
+  - name: Quix TS Datalake Catalog
+    group: QuixLake
+    image: quixcontainerregistry.azurecr.io/quix-datalake-ts-catalog:20260407.2-gcp-fix
+    deploymentType: Service
+    resources:
+      cpu: 200
+      memory: 500
+      replicas: 1
+    publicAccess:
+      enabled: true
+      urlPrefix: iceberg-catalog
+    network:
+      serviceName: iceberg-catalog
+      ports:
+        - port: 80
+          targetPort: 5001
+    variables:
+      - name: CATALOG_PREFIX
+        inputType: FreeText
+        description: S3 prefix/folder for catalog metadata
+        value: catalog
+      - name: PORT
+        inputType: FreeText
+        description: Port for the REST catalog service
+        value: 5001
+      - name: POSTGRES_HOST
+        inputType: FreeText
+        description: PostgreSQL host address
+        value: postgresql
+      - name: POSTGRES_PORT
+        inputType: FreeText
+        description: PostgreSQL port
+        value: 80
+      - name: POSTGRES_DB
+        inputType: FreeText
+        description: PostgreSQL database name
+        value: iceberg_catalog
+      - name: POSTGRES_USER
+        inputType: FreeText
+        description: PostgreSQL username
+        value: admin
+      - name: POSTGRES_PASSWORD
+        inputType: Secret
+        description: PostgreSQL password
+        secretKey: postgres_password
+      - name: CATALOG_BACKEND
+        inputType: FreeText
+        required: true
+        value: postgres
+    blobStorage:
+      bind: true
+  - name: postgreSQL
+    group: QuixLake
+    application: postgresql
+    version: latest
+    deploymentType: Service
+    resources:
+      cpu: 200
+      memory: 1000
+      replicas: 1
+    network:
+      serviceName: postgresql
+      ports:
+        - port: 80
+          targetPort: 5432
+    variables:
+      - name: POSTGRES_USER
+        inputType: FreeText
+        description: The root username to initialize PostgreSQL with
+        required: true
+        value: admin
+      - name: POSTGRES_PASSWORD
+        inputType: Secret
+        description: The root password to initialize MongoDB with
+        required: true
+        secretKey: postgres_password
+      - name: POSTGRES_DB
+        inputType: FreeText
+        description: The default database name to initialize PostgreSQL with
+        required: true
+        value: quix
+  - name: QuixLab
+    application: quixlab
+    version: latest
+    deploymentType: Service
+    resources:
+      cpu: 1000
+      memory: 4000
+      replicas: 1
+    publicAccess:
+      enabled: true
+      urlPrefix: quixlab
+    state:
+      enabled: true
+      size: 1
+    network:
+      ports:
+        - port: 80
+          targetPort: 80
+    variables:
+      - name: QUIXLAB_NOTEBOOK
+        inputType: FreeText
+        description: Notebook file to open on startup (leave empty for the file picker)
+        value: main.py
+      - name: QUIXLAB_MODE
+        inputType: FreeText
+        description: "Run mode: 'app' (view only) or 'edit' (full editor)"
+        value: edit
+      - name: QUIX_LAKE_URL
+        inputType: FreeText
+        description: Base URL of the QuixLake instance to query against (e.g. https://quixlake-<workspace>.deployments.quix.io). Required for ql.sql() to work outside the default dev environment.
+        required: true
+        value: https://quixlake-api-demo-jetenginedemo-prod.az-france-0.app.quix.io
+      - name: QUIX_LAKE_TOKEN
+        inputType: Secret
+        description: Override token for QuixLake queries. Leave empty to use the platform-injected Quix__Sdk__Token.
+        secretKey: catalog_auth_token
+    plugin:
+      embeddedView:
+        enabled: true
+        hideHeader: true
+        default: true
+      sidebarItem:
+        show: true
+        label: QuixLab
+        icon: grid_view
+        order: 1
+      globalItem:
+        show: true
+        label: QuixLab
+        icon: find_in_page
+        order: 1
+    blobStorage:
+      bind: true
 
 # This section describes the Topics of the data pipeline
 topics:
