@@ -6,43 +6,6 @@ metadata:
 
 # This section describes the Deployments of the data pipeline
 deployments:
-  - name: LabTECH
-    group: Simulator
-    application: labview-sim
-    version: latest
-    deploymentType: Service
-    resources:
-      cpu: 200
-      memory: 500
-      replicas: 1
-    publicAccess:
-      enabled: true
-      urlPrefix: labview-sim
-    variables:
-      - name: TEST_API_URL
-        inputType: FreeText
-        value: http://test-manager-backend/api/v1/tests
-      - name: ECU_API_URL
-        inputType: FreeText
-        value: http://ecu/ecu/start
-      - name: API_TOKEN
-        inputType: Secret
-        secretKey: API_TOKEN
-    plugin:
-      embeddedView:
-        enabled: true
-        hideHeader: true
-        default: true
-      sidebarItem:
-        show: true
-        label: LabVIEW Sim
-        icon: category
-        order: 0
-      globalItem:
-        show: true
-        label: LabVIEW Sim
-        icon: category
-        order: 0
   - name: Rig ECU
     group: Simulator
     application: rig-ecu
@@ -626,6 +589,43 @@ deployments:
         order: 1
     blobStorage:
       bind: true
+  - name: LabView
+    group: Simulator
+    application: labview-sim
+    version: latest
+    deploymentType: Service
+    resources:
+      cpu: 200
+      memory: 500
+      replicas: 1
+    publicAccess:
+      enabled: true
+      urlPrefix: labview-sim
+    variables:
+      - name: TEST_API_URL
+        inputType: FreeText
+        value: http://test-manager-backend/api/v1/tests
+      - name: ECU_API_URL
+        inputType: FreeText
+        value: http://ecu/ecu/start
+      - name: API_TOKEN
+        inputType: Secret
+        secretKey: API_TOKEN
+    plugin:
+      embeddedView:
+        enabled: true
+        hideHeader: true
+        default: true
+      sidebarItem:
+        show: true
+        label: LabVIEW Sim
+        icon: category
+        order: 0
+      globalItem:
+        show: true
+        label: LabVIEW Sim
+        icon: category
+        order: 0
 
 # This section describes the Topics of the data pipeline
 topics:
