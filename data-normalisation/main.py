@@ -65,7 +65,8 @@ def main():
     )
     input_topic = app.topic(name=os.environ["input"])
     output_topic = app.topic(name=os.environ["output"])
-    dead_letter_topic = app.topic(name=os.environ["dead_letter_topic"])
+    _dlq_name = os.environ.get("dead_letter_topic") or None
+    dead_letter_topic = app.topic(name=_dlq_name) if _dlq_name else None
 
     sdf = app.dataframe(topic=input_topic)
     sdf = sdf.print(metadata=True)
