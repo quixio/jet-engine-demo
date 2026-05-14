@@ -391,7 +391,7 @@ deployments:
         order: 3
   - name: Quix TS Datalake API
     group: QuixLake
-    image: quixcontainerregistry.azurecr.io/quix-datalake-ts-api:20260407.2-gcp-fix
+    image: quixcontainerregistry.azurecr.io/quix-datalake-ts-api:20260504.3-compaction-stuck 
     deploymentType: Service
     resources:
       cpu: 1000
@@ -457,7 +457,7 @@ deployments:
         order: 2
   - name: Quix TS Datalake Catalog
     group: QuixLake
-    image: quixcontainerregistry.azurecr.io/quix-datalake-ts-catalog:20260407.2-gcp-fix
+    image: quixcontainerregistry.azurecr.io/quix-datalake-ts-catalog:20260504.3-compaction-stuck 
     deploymentType: Service
     resources:
       cpu: 200
